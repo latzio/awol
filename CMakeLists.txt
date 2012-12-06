@@ -91,7 +91,7 @@ source_group(src FILES ${GAME_SRC})
 
 set(GAME_SRC
 	src/AWOL.cpp
-	src/AWOL.h
+	src/LayerTiler.cpp
 )
 
 add_executable(${GAME_NAME}

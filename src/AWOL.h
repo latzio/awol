@@ -3,6 +3,8 @@
 
 #include "gameplay.h"
 
+#include "LayerTiler.h"
+
 using namespace gameplay;
 
 /**
@@ -51,12 +53,10 @@ protected:
 
 private:
 
-    /**
-     * Draws the scene each frame.
-     */
-    bool drawScene(Node* node);
+    Matrix _projection;
+    Vector3 _pendingMove;
 
-    Scene* _scene;
+    LayerTiler _layer;
 };
 
 #endif
