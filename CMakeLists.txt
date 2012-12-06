@@ -20,7 +20,7 @@ set(GAME_OUTPUT_DIR "${CMAKE_SOURCE_DIR}/bin/${TARGET_OS_DIR}")
 macro (append_gameplay_lib listToAppend)
     set(libName gameplay)
     find_library(FOUND_LIB_${libName} ${libName} HINTS
-        "${GAMEPLAY_SRC_PATH}/cmake/gameplay" "${GAMEPLAY_SRC_PATH}/build/gameplay" "${GAMEPLAY_SRC_PATH}/gameplay/src")
+        "${GAMEPLAY_SRC_PATH}/cmake/gameplay" "${GAMEPLAY_SRC_PATH}/build/gameplay" "${GAMEPLAY_SRC_PATH}/gameplay/src" "${GAMEPLAY_SRC_PATH}/gameplay")
     set(${listToAppend} ${${listToAppend}} ${FOUND_LIB_${libName}})
 endmacro(append_gameplay_lib)
 
