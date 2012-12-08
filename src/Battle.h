@@ -1,6 +1,8 @@
 #ifndef Battle_h
 #define Battle_h
 
+#include "Render.h"
+
 #include "gameplay.h"
 
 #include <vector>
@@ -25,17 +27,20 @@ class BattleMap : public gameplay::Ref {
 public:
     static BattleMap* create(const gameplay::Vector2& size,
                              const std::string& tileMapPath,
-                             const std::string& terrainMask,
-                             const std::string& renderMask);
+                             const std::string& terrain);
 
-    void render(RenderContext&);
+    void render(RenderContext&, const gameplay::Rectangle&);
 
 private:
-    BattleMap(const gameplay::Vector2& size);
+    BattleMap(const gameplay::Vector2& size, const std::string& terrain);
     virtual ~BattleMap();
+
+    // Game coordinates, not pixels.
+    TerrainKey terrainAtCoord(const gameplay::Vector2& point);
 
     gameplay::Vector2 m_size;
     LayerTiler* m_tiler;
+    std::string m_terrain;
 
 };
 

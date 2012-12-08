@@ -8,13 +8,29 @@ namespace Awol {
 class LayerTiler;
 
 enum TerrainKey {
-    Grass1,
-    Grass2,
-    Cover1,
-    Cover2,
+    InvalidTerrain = 0,
+    Grass1 = ' ',
+    Hut = '!',
+    WaterNW = '\"',
+    WaterSE = '#',
+    WaterSW = '$',
+    WaterS = '%',
+    Grass2 = '&',
+    DirtNW = '\'',
+    DirtNE = '(',
+    DirtS = ')',
+    DirtNSW = '*',
+    DirtSE = '+',
+    DirtW = '\'',
+    HillW = '-',
+    HillSW = '.',
+    Trees3 = '/',
+    Grass3 = '0',
+    Steppes = '1',
 };
 
 enum ObjectKey {
+    InvalidObject = 0,
     Melee1,
     Melee2,
     Ranged1,
@@ -25,8 +41,11 @@ class RenderContext {
 public:
     RenderContext();
 
-    void setTerrain(LayerTiler* layer) { m_terrain = layer; }
-    void setObjects(LayerTiler* layer) { m_objects = layer; }
+    void activateTerrain(LayerTiler* layer);
+    void deactivateTerrain();
+
+    void activateUnits(LayerTiler* layer);
+    void deactivateUnits();
     
     const gameplay::Matrix& transform() const;
     void applyTransform(const gameplay::Matrix&);
@@ -38,7 +57,7 @@ public:
 
 private:
     LayerTiler* m_terrain;
-    LayerTiler* m_objects;
+    LayerTiler* m_units;
 
     gameplay::Matrix m_transformation;
 
