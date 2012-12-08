@@ -1,15 +1,39 @@
 #include "AWOL.h"
+#include "Battle.h"
+#include "Render.h"
+
+#include "level1.h"
+
 
 // Declare our game instance
-AWOL game;
+Awol::AWOL game;
+
+namespace Awol {
 
 AWOL::AWOL()
 {
+
 }
 
 void AWOL::initialize()
 {
-    _layer.initialize();
+    BattleMap* map = BattleMap::create(Vector2(100, 40),
+                                       "res/background-tiles.png",
+                                       level1Terrain,
+                                       level1Render);
+    
+    
+    Force* force1 = new Force();
+    Force* force2 = new Force();
+    Forces forces;
+    forces.push_back(force1);
+    forces.push_back(force2);
+    
+    m_battle = new Battle(map, forces);
+
+    map->release();
+    force1->release();
+    force2->release();
 }
 
 void AWOL::finalize()
@@ -18,7 +42,9 @@ void AWOL::finalize()
 
 void AWOL::update(float elapsedTime)
 {
-    Matrix::createTranslation(_pendingMove, &_projection);
+    Matrix::createTranslation(m_pendingMove, &m_projection);
+
+    m_battle->update(elapsedTime);
 }
 
 void AWOL::render(float elapsedTime)
@@ -27,7 +53,10 @@ void AWOL::render(float elapsedTime)
     clear(CLEAR_COLOR_DEPTH, Vector4::zero(), 1.0f, 0);
 
     // Draw your sprites (we will only draw one now
-    _layer.fill(Rectangle(0, 0, getWidth(), getHeight()), _projection);
+    RenderContext context;
+    context.setTransform(m_projection);
+
+    m_battle->render(context, elapsedTime);
 }
 
 void AWOL::keyEvent(Keyboard::KeyEvent evt, int key)
@@ -56,8 +85,10 @@ void AWOL::touchEvent(Touch::TouchEvent evt, int x, int y, unsigned int contactI
     case Touch::TOUCH_RELEASE:
         break;
     case Touch::TOUCH_MOVE:
-        _pendingMove.add(touchPoint - s_lastTouchPoint);
+        m_pendingMove.add(touchPoint - s_lastTouchPoint);
         s_lastTouchPoint = touchPoint;
         break;
     };
+}
+
 }

@@ -91,7 +91,9 @@ source_group(src FILES ${GAME_SRC})
 
 set(GAME_SRC
 	src/AWOL.cpp
+	src/Battle.cpp
 	src/LayerTiler.cpp
+	src/Render.cpp
 )
 
 add_executable(${GAME_NAME}

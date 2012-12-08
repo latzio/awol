@@ -5,6 +5,8 @@
 
 using namespace gameplay;
 
+namespace Awol {
+
 /**
  * Main game class.
  */
@@ -24,4 +26,5 @@ private:
 
 };
 
+}
 #endif

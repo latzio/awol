@@ -7,6 +7,10 @@
 
 using namespace gameplay;
 
+namespace Awol {
+
+class Battle;
+
 /**
  * Main game class.
  */
@@ -53,10 +57,12 @@ protected:
 
 private:
 
-    Matrix _projection;
-    Vector3 _pendingMove;
+    Matrix m_projection;
+    Vector3 m_pendingMove;
 
-    LayerTiler _layer;
+    Battle* m_battle;
 };
+
+} // Awol
 
 #endif
