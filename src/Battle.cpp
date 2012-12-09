@@ -23,10 +23,10 @@ BattleMap* BattleMap::create(const Vector2& size,
 {
     BattleMap* map = new BattleMap(size, terrain);
     map->m_tiler = LayerTiler::create(tileMapPath,
-                                      Vector2(428, 683),
-                                      Vector2(2, 2),
-                                      Vector2(16, 16),
-                                      Vector2(17, 17));
+                                      Vector2(397, 397), // PNG Size
+                                      Vector2(1, 1),     // Sprite origin
+                                      Vector2(32, 32),   // Sprite size
+                                      Vector2(33, 33));  // Sprite stride
     return map;
 }
 

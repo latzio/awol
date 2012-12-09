@@ -7,6 +7,14 @@
 *.o
 *.so
 
+# CMake #
+#########
+CMakeCache.txt
+CMakeFiles
+Makefile
+bin
+cmake_install.cmake
+
 # VI #
 ######
 *.swp

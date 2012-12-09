@@ -8,6 +8,8 @@ namespace Awol {
 RenderContext::RenderContext()
     :m_terrain(0)
     ,m_units(0)
+    ,m_elapsed(0)
+    ,m_frameId(0)
 {
 }
 
@@ -15,13 +17,13 @@ void RenderContext::activateTerrain(LayerTiler* layer)
 {
     deactivateTerrain();
     m_terrain = layer;
-    m_terrain->startBatch();
+    m_terrain->start(m_frameId);
 }
 
 void RenderContext::deactivateTerrain()
 {
     if (m_terrain)
-        m_terrain->endBatch();
+        m_terrain->finish();
 
     m_terrain = 0;
 }
@@ -30,13 +32,13 @@ void RenderContext::activateUnits(LayerTiler* layer)
 {
     deactivateUnits();
     m_units = layer;
-    m_units->startBatch();
+    m_units->start(m_frameId);
 }
 
 void RenderContext::deactivateUnits()
 {
     if (m_units)
-        m_units->endBatch();
+        m_units->finish();
 
     m_units = 0;
 }

@@ -18,15 +18,20 @@ public:
 
     const gameplay::Vector2& tileSize() const;
 
-    void startBatch();
-    void endBatch();
+    void start(unsigned frame);
+    void finish();
     void drawTile(TerrainKey, const gameplay::Vector3&);
 
 private:
-    LayerTiler();
+    LayerTiler(const std::string& spriteImagePath,
+               const gameplay::Vector2& imageSize,
+               const gameplay::Vector2& tileOrigin,
+               const gameplay::Vector2& tileSize,
+               const gameplay::Vector2& tileStride);
     virtual ~LayerTiler();
 
-    gameplay::SpriteBatch* m_sprite;
+    std::vector<gameplay::SpriteBatch*> m_sprites;
+    gameplay::SpriteBatch* m_activeSprite;
 
     gameplay::Vector2 m_imageSize;
     gameplay::Vector2 m_tileOrigin;

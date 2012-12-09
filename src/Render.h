@@ -9,8 +9,8 @@ class LayerTiler;
 
 enum TerrainKey {
     InvalidTerrain = 0,
-    Grass1 = ' ',
-    Hut = '!',
+    Basic = ' ',
+    Cover = '!',
     WaterNW = '\"',
     WaterSE = '#',
     WaterSW = '$',
@@ -20,8 +20,8 @@ enum TerrainKey {
     DirtNE = '(',
     DirtS = ')',
     DirtNSW = '*',
-    DirtSE = '+',
-    DirtW = '\'',
+    Cover2 = '+',
+    Cover3 = '\'',
     HillW = '-',
     HillSW = '.',
     Trees3 = '/',
@@ -54,12 +54,19 @@ public:
     void paintTerrain(TerrainKey, const gameplay::Vector2&);
     void paintObject(ObjectKey, const gameplay::Vector2&);
     
+    float elapsed() const { return m_elapsed; }
+    void setElapsed(float elapsed) { m_elapsed = elapsed; }
+
+    unsigned frameId() const { return m_frameId; }
+    void setFrameId(unsigned frameId) { m_frameId = frameId; }
 
 private:
     LayerTiler* m_terrain;
     LayerTiler* m_units;
 
     gameplay::Matrix m_transformation;
+    float m_elapsed;
+    unsigned m_frameId;
 
 };
 

@@ -18,7 +18,7 @@ AWOL::AWOL()
 void AWOL::initialize()
 {
     BattleMap* map = BattleMap::create(Vector2(100, 40),
-                                       "res/background-tiles.png",
+                                       "res/background-1-1.png",
                                        level1Terrain);
     
     
@@ -48,11 +48,24 @@ void AWOL::update(float elapsedTime)
 
 void AWOL::render(float elapsedTime)
 {
+    static unsigned frameCount = 0;
+    frameCount++;
+
+    static unsigned frames = 0;
+    static float seconds = 0;
+    if (++frames && (seconds += elapsedTime / 1000.) > 5) {
+        printf("%d frames rendered in 5 seconds. [%f fps]\n", frames, frames / seconds);
+        frames = seconds = 0;
+    }
+    
+
     // Clear the color and depth buffers
     clear(CLEAR_COLOR_DEPTH, Vector4::zero(), 1.0f, 0);
 
     // Draw your sprites (we will only draw one now
     RenderContext context;
+    context.setElapsed(elapsedTime);
+    context.setFrameId(frameCount);
     context.setTransform(m_projection);
 
     m_battle->render(context, elapsedTime);
