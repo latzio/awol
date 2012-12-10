@@ -2,6 +2,7 @@
 #define Battle_h
 
 #include "Render.h"
+#include "Unit.h"
 
 #include "gameplay.h"
 
@@ -16,9 +17,14 @@ class Force : public gameplay::Ref {
 public:
     Force();
 
+    void render(RenderContext&, const gameplay::Rectangle&);
+
 private:
     virtual ~Force();
 
+    std::vector<Unit*> m_units;
+
+    LayerTiler* m_tiler;
 
 };
 
@@ -27,7 +33,7 @@ class BattleMap : public gameplay::Ref {
 public:
     static BattleMap* create(const gameplay::Vector2& size,
                              const std::string& tileMapPath,
-                             const std::string& terrain);
+                             const std::string& terrainPath);
 
     void render(RenderContext&, const gameplay::Rectangle&);
 

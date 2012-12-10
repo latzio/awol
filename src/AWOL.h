@@ -32,6 +32,7 @@ public:
      * @see Game::touchEvent
      */
     void touchEvent(Touch::TouchEvent evt, int x, int y, unsigned int contactIndex);
+    bool mouseEvent(Mouse::MouseEvent evt, int x, int y, int wheelDelta);
 
 protected:
 
@@ -58,7 +59,9 @@ protected:
 private:
 
     Matrix m_projection;
+
     Vector3 m_pendingMove;
+    Vector3 m_pendingZoom;
 
     Battle* m_battle;
 };

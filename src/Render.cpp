@@ -8,6 +8,7 @@ namespace Awol {
 RenderContext::RenderContext()
     :m_terrain(0)
     ,m_units(0)
+    ,m_runtime(0)
     ,m_elapsed(0)
     ,m_frameId(0)
 {
@@ -17,7 +18,7 @@ void RenderContext::activateTerrain(LayerTiler* layer)
 {
     deactivateTerrain();
     m_terrain = layer;
-    m_terrain->start(m_frameId);
+    m_terrain->start(m_runtime);
 }
 
 void RenderContext::deactivateTerrain()
@@ -32,7 +33,7 @@ void RenderContext::activateUnits(LayerTiler* layer)
 {
     deactivateUnits();
     m_units = layer;
-    m_units->start(m_frameId);
+    m_units->start(m_runtime);
 }
 
 void RenderContext::deactivateUnits()
@@ -64,8 +65,17 @@ void RenderContext::paintTerrain(TerrainKey key, const Vector2& dst)
         return;
     
     Vector3 transformedPoint;
+    Vector3 transformedSize(1, 1, 1);
+
     m_transformation.transformPoint(Vector3(dst.x, dst.y, 1), &transformedPoint);
-    m_terrain->drawTile(key, transformedPoint);
+    m_transformation.transformVector(&transformedSize);
+
+    Rectangle dstRect(transformedPoint.x, 
+                      transformedPoint.y, 
+                      m_terrain->tileSize().x * transformedSize.x,
+                      m_terrain->tileSize().y * transformedSize.y);
+
+    m_terrain->drawTile(key, dstRect);
 }
 
 void RenderContext::paintObject(ObjectKey key, const Vector2& dst)
@@ -73,6 +83,19 @@ void RenderContext::paintObject(ObjectKey key, const Vector2& dst)
     if (!m_units)
         return;
 
+    Vector3 transformedPoint;
+    Vector3 transformedSize(1, 1, 1);
+
+    m_transformation.transformPoint(Vector3(dst.x, dst.y, 1), &transformedPoint);
+    m_transformation.transformVector(&transformedSize);
+
+    Rectangle dstRect(transformedPoint.x, 
+                      transformedPoint.y, 
+                      m_units->tileSize().x * transformedSize.x,
+                      m_units->tileSize().y * transformedSize.y);
+
+
+    m_units->drawTile(key, dstRect);
 }
 
 }

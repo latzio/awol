@@ -31,7 +31,7 @@ enum TerrainKey {
 
 enum ObjectKey {
     InvalidObject = 0,
-    Melee1,
+    Melee1 = ' ',
     Melee2,
     Ranged1,
     Ranged2,
@@ -54,6 +54,9 @@ public:
     void paintTerrain(TerrainKey, const gameplay::Vector2&);
     void paintObject(ObjectKey, const gameplay::Vector2&);
     
+    float runtime() const { return m_runtime; }
+    void setRuntime(float runtime) { m_runtime = runtime; }
+
     float elapsed() const { return m_elapsed; }
     void setElapsed(float elapsed) { m_elapsed = elapsed; }
 
@@ -65,6 +68,8 @@ private:
     LayerTiler* m_units;
 
     gameplay::Matrix m_transformation;
+
+    float m_runtime;
     float m_elapsed;
     unsigned m_frameId;
 

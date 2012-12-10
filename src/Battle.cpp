@@ -10,11 +10,40 @@ using namespace gameplay;
 namespace Awol {
 
 Force::Force()
+    :m_tiler(0)
 {
+    TRACE
+    m_tiler = LayerTiler::create(Vector2(397, 397), // PNG Size
+                                 Vector2(1, 1),     // Sprite origin
+                                 Vector2(32, 32),   // Sprite size
+                                 Vector2(33, 33));  // Sprite stride
+    m_tiler->addFrameSpritesheet("res/units-1.png");
+
+    m_units.push_back(Unit::create());
 }
 
 Force::~Force()
 {
+    TRACE
+    std::vector<Unit*>::iterator it = m_units.begin();
+    std::vector<Unit*>::iterator last = m_units.end();
+    for (; it != last; it++)
+        (*it)->release();
+}
+
+void Force::render(RenderContext& context, const Rectangle& rect)
+{
+    Vector2 offset;
+    Vector2 size = m_tiler->tileSize();
+    
+    context.activateUnits(m_tiler);
+
+    std::vector<Unit*>::iterator it = m_units.begin();
+    std::vector<Unit*>::iterator last = m_units.end();
+    for (; it != last; it++)
+        (*it)->render(context);
+
+    context.deactivateUnits();
 }
 
 BattleMap* BattleMap::create(const Vector2& size,
@@ -22,11 +51,16 @@ BattleMap* BattleMap::create(const Vector2& size,
                              const std::string& terrain)
 {
     BattleMap* map = new BattleMap(size, terrain);
-    map->m_tiler = LayerTiler::create(tileMapPath,
-                                      Vector2(397, 397), // PNG Size
+    map->m_tiler = LayerTiler::create(Vector2(397, 397), // PNG Size
                                       Vector2(1, 1),     // Sprite origin
                                       Vector2(32, 32),   // Sprite size
                                       Vector2(33, 33));  // Sprite stride
+
+    map->m_tiler->setAnimationPeriod(.5);
+    map->m_tiler->setAnimationBehaviour(PingPong);
+    map->m_tiler->addFrameSpritesheet("res/background-1-1.png");
+    map->m_tiler->addFrameSpritesheet("res/background-1-2.png");
+    map->m_tiler->addFrameSpritesheet("res/background-1-3.png");
     return map;
 }
 
@@ -52,7 +86,6 @@ BattleMap::~BattleMap()
 
 void BattleMap::render(RenderContext& context, const Rectangle& rect)
 {
-
     Vector2 offset;
     Vector2 size = m_tiler->tileSize();
     
@@ -113,7 +146,14 @@ void Battle::update(double elapsedTime)
 
 RenderingResult Battle::render(RenderContext& context, double elapsedTime)
 {
-    m_map->render(context, Rectangle(0, 0, 1280, 768));
+    static const Rectangle screenRect(0, 0, 1280, 768);
+
+    m_map->render(context, screenRect);
+
+    Forces::iterator it = m_forces.begin();
+    Forces::iterator last = m_forces.end();
+    for (; it != last; it++)
+        (*it)->render(context, screenRect);
 
     return Animating;
 }

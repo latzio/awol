@@ -7,28 +7,44 @@
 
 namespace Awol {
 
+enum AnimationBehaviour {
+    Forward,
+    PingPong,
+};
+
 class LayerTiler : public gameplay::Ref
 {
 public:
-    static LayerTiler* create(const std::string& spriteImagePath,
-                              const gameplay::Vector2& imageSize,
+    static LayerTiler* create(const gameplay::Vector2& imageSize,
                               const gameplay::Vector2& tileOrigin,
                               const gameplay::Vector2& tileSize,
                               const gameplay::Vector2& tileStride);
 
+    void setAnimationBehaviour(AnimationBehaviour);
+    void setAnimationPeriod(float seconds);
+
+    void addFrameSpritesheet(const std::string& path);
+
     const gameplay::Vector2& tileSize() const;
 
-    void start(unsigned frame);
+    void start(float gameTime);
     void finish();
-    void drawTile(TerrainKey, const gameplay::Vector3&);
+
+    void drawTile(int key, const gameplay::Rectangle&);
 
 private:
-    LayerTiler(const std::string& spriteImagePath,
-               const gameplay::Vector2& imageSize,
+    LayerTiler(const gameplay::Vector2& imageSize,
                const gameplay::Vector2& tileOrigin,
                const gameplay::Vector2& tileSize,
                const gameplay::Vector2& tileStride);
     virtual ~LayerTiler();
+
+    gameplay::SpriteBatch* spriteForTime(float gameTime);
+
+private:
+
+    AnimationBehaviour m_animationBehaviour;
+    float m_animationPeriod;
 
     std::vector<gameplay::SpriteBatch*> m_sprites;
     gameplay::SpriteBatch* m_activeSprite;

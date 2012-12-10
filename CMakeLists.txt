@@ -94,6 +94,7 @@ set(GAME_SRC
 	src/Battle.cpp
 	src/LayerTiler.cpp
 	src/Render.cpp
+	src/Unit.cpp
 )
 
 add_executable(${GAME_NAME}
