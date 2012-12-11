@@ -13,6 +13,7 @@ Awol::AWOL game;
 namespace Awol {
 
 AWOL::AWOL()
+    :m_battle(0)
 {
 
 }
@@ -24,14 +25,14 @@ void AWOL::initialize()
     BattleMap* map = BattleMap::create(Vector2(100, 40),
                                        "res/background-1-1.png",
                                        level1Terrain);
-    
-    
+
+
     Force* force1 = new Force();
     Force* force2 = new Force();
     Forces forces;
     forces.push_back(force1);
     forces.push_back(force2);
-    
+
     m_battle = new Battle(map, forces);
 
     map->release();
@@ -62,7 +63,9 @@ void AWOL::render(float elapsedTime)
         printf("%d frames rendered in 5 seconds. [%.1f fps]\n", frames, frames / seconds);
         frames = seconds = 0;
     }
-    
+
+    if (getState() == PAUSED)
+        return;
 
     // Clear the color and depth buffers
     clear(CLEAR_COLOR_DEPTH, Vector4::zero(), 1.0f, 0);
