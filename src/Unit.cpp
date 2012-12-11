@@ -27,7 +27,7 @@ Unit::~Unit()
 
 void Unit::render(RenderContext& context)
 {
-    context.paintObject(m_objectKey, m_location * 32);
+    context.paintLayer(m_objectKey, m_location);
 }
 
 

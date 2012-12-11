@@ -41,19 +41,17 @@ class RenderContext {
 public:
     RenderContext();
 
-    void activateTerrain(LayerTiler* layer);
-    void deactivateTerrain();
+    void activateLayer(LayerTiler* layer);
+    void deactivateLayer();
 
-    void activateUnits(LayerTiler* layer);
-    void deactivateUnits();
+    // This is in game coordinates. The conversion to screen pixels
+    // is done using the tileSize from the active layer.
+    void paintLayer(unsigned key, const gameplay::Vector2&); 
     
     const gameplay::Matrix& transform() const;
     void applyTransform(const gameplay::Matrix&);
     void setTransform(const gameplay::Matrix&);
 
-    void paintTerrain(TerrainKey, const gameplay::Vector2&);
-    void paintObject(ObjectKey, const gameplay::Vector2&);
-    
     float runtime() const { return m_runtime; }
     void setRuntime(float runtime) { m_runtime = runtime; }
 
@@ -64,8 +62,7 @@ public:
     void setFrameId(unsigned frameId) { m_frameId = frameId; }
 
 private:
-    LayerTiler* m_terrain;
-    LayerTiler* m_units;
+    LayerTiler* m_layer;
 
     gameplay::Matrix m_transformation;
 

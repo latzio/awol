@@ -68,17 +68,17 @@ public:
     bool handleTouchEvent(gameplay::Touch::TouchEvent event, const gameplay::Vector2& point);
 
     void update(double elapsedTime);
-    
+
     RenderingResult render(RenderContext&, double elapsedTime);
 
 
-private: 
+private:
     virtual ~Battle();
-    
+
 
     BattleMap* m_map;
     Forces m_forces;
-    
+
 
 };
 

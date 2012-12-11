@@ -35,15 +35,15 @@ void Force::render(RenderContext& context, const Rectangle& rect)
 {
     Vector2 offset;
     Vector2 size = m_tiler->tileSize();
-    
-    context.activateUnits(m_tiler);
+
+    context.activateLayer(m_tiler);
 
     std::vector<Unit*>::iterator it = m_units.begin();
     std::vector<Unit*>::iterator last = m_units.end();
     for (; it != last; it++)
         (*it)->render(context);
 
-    context.deactivateUnits();
+    context.deactivateLayer();
 }
 
 BattleMap* BattleMap::create(const Vector2& size,
@@ -86,19 +86,14 @@ BattleMap::~BattleMap()
 
 void BattleMap::render(RenderContext& context, const Rectangle& rect)
 {
-    Vector2 offset;
-    Vector2 size = m_tiler->tileSize();
-    
-    context.activateTerrain(m_tiler);
-    
-    for (offset.x = rect.left(); offset.x < rect.right(); offset.x = offset.x + size.x) {
-        for (offset.y = rect.top(); offset.y < rect.bottom(); offset.y = offset.y + size.y) {
-            Vector2 coord(offset.x / size.x, offset.y / size.y);
-            context.paintTerrain(terrainAtCoord(coord), offset);
-        }
-    }
+    context.activateLayer(m_tiler);
 
-    context.deactivateTerrain();
+    Vector2 coord;
+    for (coord.x = 0; coord.x < m_size.x; coord.x++)
+        for (coord.y = 0; coord.y < m_size.y; coord.y++)
+            context.paintLayer(terrainAtCoord(coord), coord);
+
+    context.deactivateLayer();
 }
 
 TerrainKey BattleMap::terrainAtCoord(const Vector2& point)
@@ -120,7 +115,7 @@ Battle::Battle(BattleMap *map, const Forces& forces)
     ,m_forces(forces)
 {
     TRACE
-    m_map->addRef();    
+    m_map->addRef();
 
     // Ref all the forces.
     Forces::iterator it = m_forces.begin();
@@ -138,7 +133,7 @@ Battle::~Battle()
     Forces::iterator last = m_forces.end();
     for (; it != last; ++it)
         (*it)->release();
-}   
+}
 
 void Battle::update(double elapsedTime)
 {
@@ -149,6 +144,10 @@ RenderingResult Battle::render(RenderContext& context, double elapsedTime)
     static const Rectangle screenRect(0, 0, 1280, 768);
 
     m_map->render(context, screenRect);
+
+    Matrix scale;
+    // Matrix::createScale(Vector3(32, 32, 1), &scale);
+    context.applyTransform(scale);
 
     Forces::iterator it = m_forces.begin();
     Forces::iterator last = m_forces.end();
