@@ -3,8 +3,6 @@
 #include "Log.h"
 #include "Render.h"
 
-#include "level1.h"
-
 using namespace gameplay;
 
 namespace Awol {

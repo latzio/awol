@@ -3,10 +3,6 @@
 #include "Log.h"
 #include "Render.h"
 
-
-#include "level1.h"
-
-
 // Declare our game instance
 Awol::AWOL game;
 
