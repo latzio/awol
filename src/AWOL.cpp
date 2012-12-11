@@ -24,7 +24,7 @@ void AWOL::initialize()
 
     BattleMap* map = BattleMap::create(Vector2(100, 40),
                                        "res/background-1-1.png",
-                                       level1Terrain);
+                                       "res/level1.dat");
 
 
     Force* force1 = new Force();

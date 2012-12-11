@@ -48,9 +48,9 @@ void Force::render(RenderContext& context, const Rectangle& rect)
 
 BattleMap* BattleMap::create(const Vector2& size,
                              const std::string& tileMapPath,
-                             const std::string& terrain)
+                             const std::string& terrainPath)
 {
-    BattleMap* map = new BattleMap(size, terrain);
+    BattleMap* map = new BattleMap(size, terrainPath);
     map->m_tiler = LayerTiler::create(Vector2(397, 397), // PNG Size
                                       Vector2(1, 1),     // Sprite origin
                                       Vector2(32, 32),   // Sprite size
@@ -64,14 +64,15 @@ BattleMap* BattleMap::create(const Vector2& size,
     return map;
 }
 
-BattleMap::BattleMap(const Vector2& size, const std::string& terrain)
+BattleMap::BattleMap(const Vector2& size, const std::string& terrainPath)
     :m_size(size)
     ,m_tiler(0)
-    ,m_terrain(terrain)
 {
     TRACE
-    if (m_size.x * m_size.y != terrain.size()) {
-        fprintf(stderr, "Error: Map size not equal to mask.\n");
+    loadTerrainGrid(terrainPath);
+
+    if (m_size.x * m_size.y != m_terrain.size() * m_terrain[0].size()) {
+        fprintf(stderr, "Error: Map size not equal to terrain mask.\n");
         exit(-1);
     }
 }
@@ -98,16 +99,41 @@ void BattleMap::render(RenderContext& context, const Rectangle& rect)
 
 TerrainKey BattleMap::terrainAtCoord(const Vector2& point)
 {
-    // Calculate the 1-dimensional index from coordinates and
-    // make sure it's within our range.
-    int index = point.y * m_size.x + point.x;
-    if (index >= 0 && index < m_terrain.size()) {
-        char key = m_terrain[index];
-        if (key >= ' ')
-            return static_cast<TerrainKey>(key);
-    }
+    // The terrain array is actually in column major order so
+    // this convenience method gets the the keys we expect from
+    // the visual representation.
+    if (point.y >= m_terrain.size() || point.x >= m_terrain[0].size())
+        return InvalidTerrain;
 
-    return InvalidTerrain;
+    return m_terrain[point.y][point.x].key();
+}
+
+void BattleMap::loadTerrainGrid(const std::string& path)
+{
+    FILE *f = fopen(path.c_str(), "rb");
+    fseek(f, 0, SEEK_END);
+    long pos = ftell(f);
+    fseek(f, 0, SEEK_SET);
+
+    char bytes[pos];
+    fread(bytes, pos, 1, f);
+    fclose(f);
+
+    unsigned count = 0;
+    while(m_terrain.size() < m_size.y) {
+        m_terrain.push_back(TerrainRow());
+        while (char key = bytes[count++]) {
+            if (key >= ' ' && key < '~') {
+                m_terrain.back().push_back(Terrain(static_cast<TerrainKey>(key)));
+            } else if (key == '~') {
+                if (m_terrain.back().size() != m_size.x) {
+                    fprintf(stderr, "Row %ld incorrect size. Fail.\n", m_terrain.size());
+                    exit(-1);
+                }
+                break;
+            }
+        }
+    }
 }
 
 Battle::Battle(BattleMap *map, const Forces& forces)

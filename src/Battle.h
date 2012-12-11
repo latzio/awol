@@ -28,6 +28,20 @@ private:
 
 };
 
+class Terrain {
+public:
+    Terrain(TerrainKey key)
+        :m_key(key)
+    { };
+
+    TerrainKey key() const { return m_key; }
+
+private:
+    TerrainKey m_key;
+};
+
+typedef std::vector<Terrain> TerrainRow;
+typedef std::vector<TerrainRow> TerrainGrid;
 
 class BattleMap : public gameplay::Ref {
 public:
@@ -41,12 +55,14 @@ private:
     BattleMap(const gameplay::Vector2& size, const std::string& terrain);
     virtual ~BattleMap();
 
+    void loadTerrainGrid(const std::string& path);
+
     // Game coordinates, not pixels.
     TerrainKey terrainAtCoord(const gameplay::Vector2& point);
 
     gameplay::Vector2 m_size;
     LayerTiler* m_tiler;
-    std::string m_terrain;
+    TerrainGrid m_terrain;
 
 };
 
