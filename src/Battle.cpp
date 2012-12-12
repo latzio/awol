@@ -110,17 +110,19 @@ void BattleMap::loadTerrainGrid(const std::string& path)
 {
     FILE *f = fopen(path.c_str(), "rb");
     fseek(f, 0, SEEK_END);
-    long pos = ftell(f);
+    unsigned rawSize = ftell(f);
     fseek(f, 0, SEEK_SET);
 
-    char bytes[pos];
-    fread(bytes, pos, 1, f);
+    std::string rawTerrain;
+	rawTerrain.reserve(rawSize);
+
+    fread(&rawTerrain[0], rawSize, 1, f);
     fclose(f);
 
     unsigned count = 0;
     while(m_terrain.size() < m_size.y) {
         m_terrain.push_back(TerrainRow());
-        while (char key = bytes[count++]) {
+        while (char key = rawTerrain[count++]) {
             if (key >= ' ' && key < '~') {
                 m_terrain.back().push_back(Terrain(static_cast<TerrainKey>(key)));
             } else if (key == '~') {

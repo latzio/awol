@@ -7,7 +7,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-	<None Include="game.config" />
+    <None Include="game.config" />
     <None Include="icon.png" />
     <None Include="bar-descriptor.xml" />
     <None Include="res\box.dae">
@@ -30,9 +30,36 @@
     <ClInclude Include="src\AWOL.h">
       <Filter>src</Filter>
     </ClInclude>
+    <ClInclude Include="src\Battle.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\LayerTiler.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Log.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Render.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Unit.h">
+      <Filter>src</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\AWOL.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Battle.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\LayerTiler.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Render.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Unit.cpp">
       <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>

@@ -28,7 +28,8 @@
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <Keyword>Win32Proj</Keyword>
-    <RootNamespace></RootNamespace>
+    <RootNamespace>
+    </RootNamespace>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -323,9 +324,18 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\AWOL.cpp" />
+    <ClCompile Include="src\Battle.cpp" />
+    <ClCompile Include="src\LayerTiler.cpp" />
+    <ClCompile Include="src\Render.cpp" />
+    <ClCompile Include="src\Unit.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\AWOL.h" />
+    <ClInclude Include="src\Battle.h" />
+    <ClInclude Include="src\LayerTiler.h" />
+    <ClInclude Include="src\Log.h" />
+    <ClInclude Include="src\Render.h" />
+    <ClInclude Include="src\Unit.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
