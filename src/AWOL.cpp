@@ -98,9 +98,9 @@ void AWOL::keyEvent(Keyboard::KeyEvent evt, int key)
 bool AWOL::mouseEvent(Mouse::MouseEvent evt, int x, int y, int wheelDelta)
 {
     if (wheelDelta > 0) {
-        m_pendingZoom.scale(1.1);
+        m_pendingZoom.scale(1.1f);
     } else if (wheelDelta < 0) {
-        m_pendingZoom.scale(0.9);
+        m_pendingZoom.scale(0.9f);
     }
 
     return false;
