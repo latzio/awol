@@ -171,10 +171,6 @@ RenderingResult Battle::render(RenderContext& context, double elapsedTime)
 
     m_map->render(context, screenRect);
 
-    Matrix scale;
-    // Matrix::createScale(Vector3(32, 32, 1), &scale);
-    context.applyTransform(scale);
-
     Forces::iterator it = m_forces.begin();
     Forces::iterator last = m_forces.end();
     for (; it != last; it++)
