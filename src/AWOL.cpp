@@ -21,7 +21,7 @@ void AWOL::initialize()
     BattleMap* map = BattleMap::create(Vector2(100, 40),
                                        "res/background-1-1.png",
                                        "res/level1.dat");
-
+    m_pendingZoom = Vector3(2, 2, 1);
 
     Force* force1 = new Force();
     Force* force2 = new Force();
@@ -114,13 +114,16 @@ void AWOL::touchEvent(Touch::TouchEvent evt, int x, int y, unsigned int contactI
     switch (evt)
     {
     case Touch::TOUCH_PRESS:
-        s_lastTouchPoint = touchPoint;
+        if (!contactIndex)
+            s_lastTouchPoint = touchPoint;
         break;
     case Touch::TOUCH_RELEASE:
         break;
     case Touch::TOUCH_MOVE:
-        m_pendingMove.add(touchPoint - s_lastTouchPoint);
-        s_lastTouchPoint = touchPoint;
+        if (!contactIndex) {
+            m_pendingMove.add(touchPoint - s_lastTouchPoint);
+            s_lastTouchPoint = touchPoint;
+        }
         break;
     };
 }
