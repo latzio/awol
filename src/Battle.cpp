@@ -3,6 +3,8 @@
 #include "Log.h"
 #include "Render.h"
 
+#include "gameplay.h"
+
 using namespace gameplay;
 
 namespace Awol {
@@ -29,7 +31,7 @@ Force::~Force()
         (*it)->release();
 }
 
-void Force::render(RenderContext& context, const Rectangle& rect)
+void Force::render(RenderContext& context, const gameplay::Rectangle& rect)
 {
     Vector2 offset;
     Vector2 size = m_tiler->tileSize();
@@ -83,7 +85,7 @@ BattleMap::~BattleMap()
     m_tiler = 0;
 }
 
-void BattleMap::render(RenderContext& context, const Rectangle& rect)
+void BattleMap::render(RenderContext& context, const gameplay::Rectangle& rect)
 {
     context.activateLayer(m_tiler);
 
@@ -161,13 +163,20 @@ Battle::~Battle()
         (*it)->release();
 }
 
+bool Battle::handleTouchEvent(const Event& event)
+{
+	bool consumed = false;
+
+	return consumed;
+}
+
 void Battle::update(double elapsedTime)
 {
 }
 
 RenderingResult Battle::render(RenderContext& context, double elapsedTime)
 {
-    static const Rectangle screenRect(0, 0, 1280, 768);
+    static const gameplay::Rectangle screenRect(0, 0, 1280, 768);
 
     m_map->render(context, screenRect);
 

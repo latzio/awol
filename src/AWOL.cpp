@@ -1,6 +1,8 @@
 #include "AWOL.h"
 #include "Battle.h"
+#include "Event.h"
 #include "Log.h"
+#include "Primitives.h"
 #include "Render.h"
 
 // Declare our game instance
@@ -110,6 +112,14 @@ void AWOL::touchEvent(Touch::TouchEvent evt, int x, int y, unsigned int contactI
 {
     static Vector3 s_lastTouchPoint;
     Vector3 touchPoint(x, y, 0);
+  
+	Event event(evt == Touch::TOUCH_PRESS ? TouchStart : 
+		        evt == Touch::TOUCH_MOVE ? TouchMove : TouchEnd, 
+				IntPoint(x, y),
+                contactIndex);
+
+    if (m_battle->handleTouchEvent(event))
+        return;
 
     switch (evt)
     {

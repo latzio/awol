@@ -1,6 +1,7 @@
 #ifndef Battle_h
 #define Battle_h
 
+#include "Event.h"
 #include "Render.h"
 #include "Unit.h"
 
@@ -10,6 +11,7 @@
 
 namespace Awol {
 
+class Event;
 class LayerTiler;
 class RenderContext;
 
@@ -81,7 +83,7 @@ public:
     // A LevelMap to contain the grid information, and two object
     Battle(BattleMap*, const Forces&);
 
-    bool handleTouchEvent(gameplay::Touch::TouchEvent event, const gameplay::Vector2& point);
+    bool handleTouchEvent(const Event&);
 
     void update(double elapsedTime);
 

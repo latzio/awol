@@ -45,6 +45,12 @@
     <ClInclude Include="src\Unit.h">
       <Filter>src</Filter>
     </ClInclude>
+    <ClInclude Include="src\Event.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Primitives.h">
+      <Filter>src</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\AWOL.cpp">
@@ -60,6 +66,12 @@
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="src\Unit.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Event.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Primitives.cpp">
       <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>
