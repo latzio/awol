@@ -24,6 +24,8 @@ public:
 	
 	int x() const { return m_x; }
 	int y() const { return m_y; }
+    int squaredLength() const { return m_x * m_x + m_y * m_y; }
+    float length() const { return sqrt(static_cast<float>(squaredLength())); }
 
     void setX(int x) { m_x = x; }
     void setY(int y) { m_y = y; }
@@ -55,6 +57,7 @@ public:
 	
 	int dx() const { return m_dx; }
 	int dy() const { return m_dy; }
+    int area() const { return m_dx * m_dy; }
 
     void setDX(int dx) { m_dx = dx; }
     void setDY(int dy) { m_dy = dy; }

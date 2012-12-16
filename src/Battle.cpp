@@ -13,10 +13,10 @@ Force::Force()
     :m_tiler(0)
 {
     TRACE
-    m_tiler = LayerTiler::create(Vector2(397, 397), // PNG Size
-                                 Vector2(1, 1),     // Sprite origin
-                                 Vector2(32, 32),   // Sprite size
-                                 Vector2(33, 33));  // Sprite stride
+    m_tiler = LayerTiler::create(IntSize(397, 397), // PNG Size
+                                 IntPoint(1, 1),    // Sprite origin
+                                 IntSize(32, 32),   // Sprite size
+                                 IntSize(33, 33));  // Sprite stride
     m_tiler->addFrameSpritesheet("res/units-1.png");
 
     m_units.push_back(Unit::create());
@@ -46,15 +46,15 @@ void Force::render(RenderContext& context, const gameplay::Rectangle& rect)
     context.deactivateLayer();
 }
 
-BattleMap* BattleMap::create(const Vector2& size,
+BattleMap* BattleMap::create(const IntSize& size,
                              const std::string& tileMapPath,
                              const std::string& terrainPath)
 {
     BattleMap* map = new BattleMap(size, terrainPath);
-    map->m_tiler = LayerTiler::create(Vector2(397, 397), // PNG Size
-                                      Vector2(1, 1),     // Sprite origin
-                                      Vector2(32, 32),   // Sprite size
-                                      Vector2(33, 33));  // Sprite stride
+    map->m_tiler = LayerTiler::create(IntSize(397, 397), // PNG Size
+                                      IntPoint(1, 1),    // Sprite origin
+                                      IntSize(32, 32),   // Sprite size
+                                      IntSize(33, 33));  // Sprite stride
 
     map->m_tiler->setAnimationPeriod(.5);
     map->m_tiler->setAnimationBehaviour(PingPong);
@@ -64,14 +64,14 @@ BattleMap* BattleMap::create(const Vector2& size,
     return map;
 }
 
-BattleMap::BattleMap(const Vector2& size, const std::string& terrainPath)
+BattleMap::BattleMap(const IntSize& size, const std::string& terrainPath)
     :m_size(size)
     ,m_tiler(0)
 {
     TRACE
     loadTerrainGrid(terrainPath);
 
-    if (m_size.x * m_size.y != m_terrain.size() * m_terrain[0].size()) {
+    if (m_size.area() != m_terrain.size() * m_terrain[0].size()) {
         fprintf(stderr, "Error: Map size not equal to terrain mask.\n");
         exit(-1);
     }
@@ -89,23 +89,23 @@ void BattleMap::render(RenderContext& context, const gameplay::Rectangle& rect)
 {
     context.activateLayer(m_tiler);
 
-    Vector2 coord;
-    for (coord.x = 0; coord.x < m_size.x; coord.x++)
-        for (coord.y = 0; coord.y < m_size.y; coord.y++)
+    IntPoint coord;
+    for (coord.setX(0); coord.x() < m_size.dx(); coord.setX(coord.x() + 1))
+        for (coord.setY(0); coord.y() < m_size.dy(); coord.setY(coord.y() + 1))
             context.paintLayer(terrainAtCoord(coord), coord);
 
     context.deactivateLayer();
 }
 
-TerrainKey BattleMap::terrainAtCoord(const Vector2& point)
+TerrainKey BattleMap::terrainAtCoord(const IntPoint& point)
 {
     // The terrain array is actually in column major order so
     // this convenience method gets the the keys we expect from
     // the visual representation.
-    if (point.y >= m_terrain.size() || point.x >= m_terrain[0].size())
+    if (static_cast<unsigned>(point.y()) >= m_terrain.size() || static_cast<unsigned>(point.x()) >= m_terrain[0].size())
         return InvalidTerrain;
 
-    return m_terrain[point.y][point.x].key();
+    return m_terrain[point.y()][point.x()].key();
 }
 
 void BattleMap::loadTerrainGrid(const std::string& path)
@@ -122,13 +122,13 @@ void BattleMap::loadTerrainGrid(const std::string& path)
     fclose(f);
 
     unsigned count = 0;
-    while(m_terrain.size() < m_size.y) {
+    while(m_terrain.size() < static_cast<unsigned>(m_size.dy())) {
         m_terrain.push_back(TerrainRow());
         while (char key = rawTerrain[count++]) {
             if (key >= ' ' && key < '~') {
                 m_terrain.back().push_back(Terrain(static_cast<TerrainKey>(key)));
             } else if (key == '~') {
-                if (m_terrain.back().size() != m_size.x) {
+                if (m_terrain.back().size() != m_size.dx()) {
                     fprintf(stderr, "Row %ld incorrect size. Fail.\n", m_terrain.size());
                     exit(-1);
                 }

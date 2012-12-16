@@ -44,8 +44,8 @@ void RenderContext::paintLayer(unsigned key, const Vector2& dst)
 
     Rectangle dstRect(transformedPoint.x,
                       transformedPoint.y,
-                      m_layer->tileSize().x * transformedSize.x,
-                      m_layer->tileSize().y * transformedSize.y);
+                      m_layer->tileSize().dx() * transformedSize.x,
+                      m_layer->tileSize().dy() * transformedSize.y);
 
     m_layer->drawTile(key, dstRect);
 }

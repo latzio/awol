@@ -47,22 +47,22 @@ typedef std::vector<TerrainRow> TerrainGrid;
 
 class BattleMap : public gameplay::Ref {
 public:
-    static BattleMap* create(const gameplay::Vector2& size,
+    static BattleMap* create(const IntSize& size,
                              const std::string& tileMapPath,
                              const std::string& terrainPath);
 
     void render(RenderContext&, const gameplay::Rectangle&);
 
 private:
-    BattleMap(const gameplay::Vector2& size, const std::string& terrain);
+    BattleMap(const IntSize& size, const std::string& terrain);
     virtual ~BattleMap();
 
     void loadTerrainGrid(const std::string& path);
 
     // Game coordinates, not pixels.
-    TerrainKey terrainAtCoord(const gameplay::Vector2& point);
+    TerrainKey terrainAtCoord(const IntPoint& point);
 
-    gameplay::Vector2 m_size;
+    IntSize m_size;
     LayerTiler* m_tiler;
     TerrainGrid m_terrain;
 

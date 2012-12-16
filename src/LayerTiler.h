@@ -1,6 +1,7 @@
 #ifndef LayerTiler_h
 #define LayerTiler_h
 
+#include "Primitives.h"
 #include "Render.h"
 
 #include "gameplay.h"
@@ -15,17 +16,17 @@ enum AnimationBehaviour {
 class LayerTiler : public gameplay::Ref
 {
 public:
-    static LayerTiler* create(const gameplay::Vector2& imageSize,
-                              const gameplay::Vector2& tileOrigin,
-                              const gameplay::Vector2& tileSize,
-                              const gameplay::Vector2& tileStride);
+    static LayerTiler* create(const IntSize& imageSize,
+                              const IntPoint& tileOrigin,
+                              const IntSize& tileSize,
+                              const IntSize& tileStride);
 
     void setAnimationBehaviour(AnimationBehaviour);
     void setAnimationPeriod(float seconds);
 
     void addFrameSpritesheet(const std::string& path);
 
-    const gameplay::Vector2& tileSize() const;
+    const IntSize& tileSize() const;
 
     void start(float gameTime);
     void finish();
@@ -33,10 +34,10 @@ public:
     void drawTile(int key, const gameplay::Rectangle&);
 
 private:
-    LayerTiler(const gameplay::Vector2& imageSize,
-               const gameplay::Vector2& tileOrigin,
-               const gameplay::Vector2& tileSize,
-               const gameplay::Vector2& tileStride);
+    LayerTiler(const IntSize& imageSize,
+               const IntPoint& tileOrigin,
+               const IntSize& tileSize,
+               const IntSize& tileStride);
     virtual ~LayerTiler();
 
     gameplay::SpriteBatch* spriteForTime(float gameTime);
@@ -49,10 +50,10 @@ private:
     std::vector<gameplay::SpriteBatch*> m_sprites;
     gameplay::SpriteBatch* m_activeSprite;
 
-    gameplay::Vector2 m_imageSize;
-    gameplay::Vector2 m_tileOrigin;
-    gameplay::Vector2 m_tileSize;
-    gameplay::Vector2 m_tileStride;
+    IntSize m_imageSize;
+    IntPoint m_tileOrigin;
+    IntSize m_tileSize;
+    IntSize m_tileStride;
 
 };
 

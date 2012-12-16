@@ -25,6 +25,9 @@
     <None Include="res\colored.vert">
       <Filter>res</Filter>
     </None>
+    <None Include="res\level1.dat">
+      <Filter>res</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\AWOL.h">

@@ -20,7 +20,7 @@ void AWOL::initialize()
 {
     m_pendingZoom = Vector3::one();
 
-    BattleMap* map = BattleMap::create(Vector2(100, 40),
+    BattleMap* map = BattleMap::create(IntSize(100, 40),
                                        "res/background-1-1.png",
                                        "res/level1.dat");
     m_pendingZoom = Vector3(2, 2, 1);

@@ -5,19 +5,19 @@ using namespace gameplay;
 
 namespace Awol {
 
-LayerTiler* LayerTiler::create(const gameplay::Vector2& imageSize,
-                               const gameplay::Vector2& tileOrigin,
-                               const gameplay::Vector2& tileSize,
-                               const gameplay::Vector2& tileStride)
+LayerTiler* LayerTiler::create(const IntSize& imageSize,
+                               const IntPoint& tileOrigin,
+                               const IntSize& tileSize,
+                               const IntSize& tileStride)
 {
     LayerTiler* layer = new LayerTiler(imageSize, tileOrigin, tileSize, tileStride);
     return layer;
 }
 
-LayerTiler::LayerTiler(const gameplay::Vector2& imageSize,
-                       const gameplay::Vector2& tileOrigin,
-                       const gameplay::Vector2& tileSize,
-                       const gameplay::Vector2& tileStride)
+LayerTiler::LayerTiler(const IntSize& imageSize,
+                       const IntPoint& tileOrigin,
+                       const IntSize& tileSize,
+                       const IntSize& tileStride)
     :m_animationBehaviour(Forward)
     ,m_animationPeriod(0)
     ,m_imageSize(imageSize)
@@ -51,7 +51,7 @@ void LayerTiler::addFrameSpritesheet(const std::string& path)
     m_sprites.push_back(SpriteBatch::create(path.c_str()));
 }
 
-const Vector2& LayerTiler::tileSize() const
+const IntSize& LayerTiler::tileSize() const
 {
     return m_tileSize;
 }
@@ -79,11 +79,11 @@ void LayerTiler::drawTile(int key, const Rectangle& dstRect)
     if (key < ' ' || !m_activeSprite)
         return;
 
-    static Rectangle srcRect(0, 0, tileSize().x, tileSize().y);
+    static Rectangle srcRect(0, 0, tileSize().dx(), tileSize().dy());
 
     int index = key - ' ';
-    srcRect.x = index * static_cast<int>(m_tileStride.x) % static_cast<int>(m_imageSize.x - m_tileOrigin.x) + m_tileOrigin.x;
-    srcRect.y = index / static_cast<int>(m_imageSize.x / m_tileSize.x) * m_tileStride.y + m_tileOrigin.y;
+    srcRect.x = index * static_cast<int>(m_tileStride.dx()) % static_cast<int>(m_imageSize.dx() - m_tileOrigin.x()) + m_tileOrigin.x();
+    srcRect.y = index / static_cast<int>(m_imageSize.dx() / m_tileSize.dx()) * m_tileStride.dy() + m_tileOrigin.y();
 
     m_activeSprite->draw(dstRect, srcRect);
 }
