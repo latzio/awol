@@ -54,6 +54,9 @@
     <ClInclude Include="src\Primitives.h">
       <Filter>src</Filter>
     </ClInclude>
+    <ClInclude Include="src\BattleTile.h">
+      <Filter>src</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\AWOL.cpp">
@@ -75,6 +78,9 @@
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="src\Primitives.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\BattleTile.cpp">
       <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>

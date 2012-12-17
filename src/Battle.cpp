@@ -9,8 +9,15 @@ using namespace gameplay;
 
 namespace Awol {
 
-Force::Force()
-    :m_tiler(0)
+Force* Force::create(BattleMap* map)
+{
+    return new Force(map);
+}
+
+Force::Force(BattleMap* map)
+    :EventTarget()
+    ,m_map(map)
+    ,m_tiler(0)
 {
     TRACE
     m_tiler = LayerTiler::create(IntSize(397, 397), // PNG Size
@@ -20,6 +27,9 @@ Force::Force()
     m_tiler->addFrameSpritesheet("res/units-1.png");
 
     m_units.push_back(Unit::create());
+
+    static int demo = 4;
+    m_units[0]->setTile(m_map->getTile(demo++, demo++));
 }
 
 Force::~Force()
@@ -33,9 +43,6 @@ Force::~Force()
 
 void Force::render(RenderContext& context, const gameplay::Rectangle& rect)
 {
-    Vector2 offset;
-    Vector2 size = m_tiler->tileSize();
-
     context.activateLayer(m_tiler);
 
     std::vector<Unit*>::iterator it = m_units.begin();
@@ -44,6 +51,12 @@ void Force::render(RenderContext& context, const gameplay::Rectangle& rect)
         (*it)->render(context);
 
     context.deactivateLayer();
+}
+
+bool Force::handleTouchEvent(const Event& event)
+{
+
+    return false;
 }
 
 BattleMap* BattleMap::create(const IntSize& size,
@@ -71,7 +84,7 @@ BattleMap::BattleMap(const IntSize& size, const std::string& terrainPath)
     TRACE
     loadTerrainGrid(terrainPath);
 
-    if (m_size.area() != m_terrain.size() * m_terrain[0].size()) {
+    if (m_size.area() != m_battleField.size() * m_battleField[0].size()) {
         fprintf(stderr, "Error: Map size not equal to terrain mask.\n");
         exit(-1);
     }
@@ -89,23 +102,29 @@ void BattleMap::render(RenderContext& context, const gameplay::Rectangle& rect)
 {
     context.activateLayer(m_tiler);
 
-    IntPoint coord;
-    for (coord.setX(0); coord.x() < m_size.dx(); coord.setX(coord.x() + 1))
-        for (coord.setY(0); coord.y() < m_size.dy(); coord.setY(coord.y() + 1))
-            context.paintLayer(terrainAtCoord(coord), coord);
+    for (unsigned row = 0; row < m_battleField.size(); row++) {
+        for (unsigned col = 0; col < m_battleField[0].size(); col++) {
+            getTile(row, col)->render(context);
+        }
+    }
 
     context.deactivateLayer();
 }
 
-TerrainKey BattleMap::terrainAtCoord(const IntPoint& point)
+BattleTile* BattleMap::getTileAt(const IntPoint& point) const
 {
-    // The terrain array is actually in column major order so
-    // this convenience method gets the the keys we expect from
-    // the visual representation.
-    if (static_cast<unsigned>(point.y()) >= m_terrain.size() || static_cast<unsigned>(point.x()) >= m_terrain[0].size())
-        return InvalidTerrain;
+    if (point.x() < 0 || point.y() < 0)
+        return 0;
 
-    return m_terrain[point.y()][point.x()].key();
+    return getTile(point.y() / BattleTile::tileSize().dy(), point.x() / BattleTile::tileSize().dx());
+}
+
+BattleTile* BattleMap::getTile(unsigned row, unsigned col) const
+{
+    if (row >= m_battleField.size() || col >= m_battleField[0].size())
+        return 0;
+
+    return m_battleField[row][col];
 }
 
 void BattleMap::loadTerrainGrid(const std::string& path)
@@ -122,14 +141,19 @@ void BattleMap::loadTerrainGrid(const std::string& path)
     fclose(f);
 
     unsigned count = 0;
-    while(m_terrain.size() < static_cast<unsigned>(m_size.dy())) {
-        m_terrain.push_back(TerrainRow());
+    IntPoint location;
+
+    while(m_battleField.size() < static_cast<unsigned>(m_size.dy())) {
+        m_battleField.push_back(BattleTileRow());
         while (char key = rawTerrain[count++]) {
             if (key >= ' ' && key < '~') {
-                m_terrain.back().push_back(Terrain(static_cast<TerrainKey>(key)));
+                m_battleField.back().push_back(BattleTile::create(static_cast<TerrainKey>(key), location, BattleTile::tileSize()));
+                location.setX(location.x() + BattleTile::tileSize().dx());
             } else if (key == '~') {
-                if (m_terrain.back().size() != m_size.dx()) {
-                    fprintf(stderr, "Row %ld incorrect size. Fail.\n", m_terrain.size());
+                location.setX(0);
+                location.setY(location.y() + BattleTile::tileSize().dy());
+                if (m_battleField.back().size() != m_size.dx()) {
+                    fprintf(stderr, "Row %ld incorrect size. Fail.\n", m_battleField.size());
                     exit(-1);
                 }
                 break;
@@ -138,9 +162,8 @@ void BattleMap::loadTerrainGrid(const std::string& path)
     }
 }
 
-Battle::Battle(BattleMap *map, const Forces& forces)
+Battle::Battle(BattleMap *map)
     :m_map(map)
-    ,m_forces(forces)
 {
     TRACE
     m_map->addRef();
@@ -163,11 +186,39 @@ Battle::~Battle()
         (*it)->release();
 }
 
+void Battle::addForce(Force* force)
+{
+    if (force) {
+        force->addRef();
+        m_forces.push_back(force);
+    }
+}
+
+static Unit* s_focus = 0;
+
 bool Battle::handleTouchEvent(const Event& event)
 {
-	bool consumed = false;
+    fprintf(stderr, "Battle::handleTouchEvent Coord(%d, %d)\n", event.point().x(), event.point().y());
 
-	return consumed;
+    BattleTile* tile = m_map->getTileAt(event.point());
+    Unit* unit = tile ? tile->unit() : 0;
+
+    switch(event.getType()) {
+    case TouchStart: {
+        // Set the focus to the unit, if any. Otherwise clear it.
+        s_focus = unit;
+        break;
+    }
+    case TouchMove: {
+        break;
+    }
+    case TouchEnd: {
+        if (s_focus && tile)
+            s_focus->setTile(tile);
+    }
+    }
+
+    return s_focus;
 }
 
 void Battle::update(double elapsedTime)

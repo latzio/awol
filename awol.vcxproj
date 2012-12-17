@@ -326,6 +326,7 @@
   <ItemGroup>
     <ClCompile Include="src\AWOL.cpp" />
     <ClCompile Include="src\Battle.cpp" />
+    <ClCompile Include="src\BattleTile.cpp" />
     <ClCompile Include="src\Event.cpp" />
     <ClCompile Include="src\LayerTiler.cpp" />
     <ClCompile Include="src\Primitives.cpp" />
@@ -335,6 +336,7 @@
   <ItemGroup>
     <ClInclude Include="src\AWOL.h" />
     <ClInclude Include="src\Battle.h" />
+    <ClInclude Include="src\BattleTile.h" />
     <ClInclude Include="src\Event.h" />
     <ClInclude Include="src\LayerTiler.h" />
     <ClInclude Include="src\Log.h" />

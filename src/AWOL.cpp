@@ -12,26 +12,27 @@ namespace Awol {
 
 AWOL::AWOL()
     :m_battle(0)
+    ,m_pendingZoom(1)
 {
 
 }
 
 void AWOL::initialize()
 {
-    m_pendingZoom = Vector3::one();
+    BattleTile::setTileSize(IntSize(32, 32));
 
     BattleMap* map = BattleMap::create(IntSize(100, 40),
                                        "res/background-1-1.png",
                                        "res/level1.dat");
-    m_pendingZoom = Vector3(2, 2, 1);
+    m_pendingZoom = 1;
+    m_pendingMove = IntSize(getWidth() / 2, getHeight() / 2);
 
-    Force* force1 = new Force();
-    Force* force2 = new Force();
-    Forces forces;
-    forces.push_back(force1);
-    forces.push_back(force2);
+    Force* force1 = Force::create(map);
+    Force* force2 = Force::create(map);
 
-    m_battle = new Battle(map, forces);
+    m_battle = new Battle(map);
+    m_battle->addForce(force1);
+    m_battle->addForce(force2);
 
     map->release();
     force1->release();
@@ -44,9 +45,6 @@ void AWOL::finalize()
 
 void AWOL::update(float elapsedTime)
 {
-    Matrix::createTranslation(m_pendingMove, &m_projection);
-    m_projection.scale(m_pendingZoom.x, m_pendingZoom.y, 1);
-
     m_battle->update(elapsedTime);
 }
 
@@ -66,16 +64,17 @@ void AWOL::render(float elapsedTime)
         return;
 
     // Clear the color and depth buffers
-    clear(CLEAR_COLOR_DEPTH, Vector4::zero(), 1.0f, 0);
+    clear(CLEAR_COLOR_DEPTH, Vector4(0, 0.25f, 0.1f, 1), 1.0f, 0);
 
     // Draw your sprites (we will only draw one now
-    RenderContext context;
-    context.setRuntime(getGameTime() / 1000.0);
-    context.setElapsed(elapsedTime);
-    context.setFrameId(frameCount);
-    context.setTransform(m_projection);
+    m_context.setRuntime(getGameTime() / 1000.0);
+    m_context.setElapsed(elapsedTime);
+    m_context.setFrameId(frameCount);
 
-    m_battle->render(context, elapsedTime);
+    m_context.setScroll(m_pendingMove);
+    m_context.setScale(m_pendingZoom);
+
+    m_battle->render(m_context, elapsedTime);
 }
 
 void AWOL::keyEvent(Keyboard::KeyEvent evt, int key)
@@ -100,9 +99,9 @@ void AWOL::keyEvent(Keyboard::KeyEvent evt, int key)
 bool AWOL::mouseEvent(Mouse::MouseEvent evt, int x, int y, int wheelDelta)
 {
     if (wheelDelta > 0) {
-        m_pendingZoom.scale(1.1f);
+        m_pendingZoom = m_pendingZoom * 1.1f;
     } else if (wheelDelta < 0) {
-        m_pendingZoom.scale(0.9f);
+        m_pendingZoom = m_pendingZoom * 0.9f;
     }
 
     return false;
@@ -110,12 +109,15 @@ bool AWOL::mouseEvent(Mouse::MouseEvent evt, int x, int y, int wheelDelta)
 
 void AWOL::touchEvent(Touch::TouchEvent evt, int x, int y, unsigned int contactIndex)
 {
-    static Vector3 s_lastTouchPoint;
-    Vector3 touchPoint(x, y, 0);
-  
+    static IntPoint s_lastTouchPoint;
+    IntPoint touchPoint(x, y);
+
+    IntPoint untransformedPoint(touchPoint);
+    m_context.transformFromScreen(untransformedPoint);
+
 	Event event(evt == Touch::TOUCH_PRESS ? TouchStart : 
 		        evt == Touch::TOUCH_MOVE ? TouchMove : TouchEnd, 
-				IntPoint(x, y),
+				untransformedPoint,
                 contactIndex);
 
     if (m_battle->handleTouchEvent(event))
@@ -131,7 +133,7 @@ void AWOL::touchEvent(Touch::TouchEvent evt, int x, int y, unsigned int contactI
         break;
     case Touch::TOUCH_MOVE:
         if (!contactIndex) {
-            m_pendingMove.add(touchPoint - s_lastTouchPoint);
+            m_pendingMove = m_pendingMove + (s_lastTouchPoint - touchPoint);
             s_lastTouchPoint = touchPoint;
         }
         break;

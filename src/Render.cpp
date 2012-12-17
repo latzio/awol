@@ -28,41 +28,50 @@ void RenderContext::deactivateLayer()
     m_layer = 0;
 }
 
-void RenderContext::paintLayer(unsigned key, const Vector2& dst)
+void RenderContext::paintActive(unsigned key, const Rectangle& dstRect)
 {
     if (!m_layer || !key)
         return;
 
-    Vector2 layerCoords = m_layer->tileSize();
-    layerCoords.scale(dst);
+    Rectangle translatedRect(dstRect);
+    transformToScreen(translatedRect);
 
-    Vector3 transformedPoint;
-    Vector3 transformedSize(1, 1, 1);
-
-    m_transformation.transformPoint(Vector3(layerCoords.x, layerCoords.y, 1), &transformedPoint);
-    m_transformation.transformVector(&transformedSize);
-
-    Rectangle dstRect(transformedPoint.x,
-                      transformedPoint.y,
-                      m_layer->tileSize().dx() * transformedSize.x,
-                      m_layer->tileSize().dy() * transformedSize.y);
-
-    m_layer->drawTile(key, dstRect);
+    static const Rectangle screenRect(0, 0, 1280, 768);
+    if (screenRect.intersects(translatedRect))
+        m_layer->drawTile(key, translatedRect);
 }
 
-const Matrix& RenderContext::transform() const
+void RenderContext::transformToScreen(IntPoint& point)
 {
-    return m_transformation;
+    point = point + m_scroll;
 }
 
-void RenderContext::applyTransform(const Matrix& matrix)
+void RenderContext::transformToScreen(Rectangle& rect)
 {
-    m_transformation = m_transformation * matrix;
+    rect.x *= m_scale;
+    rect.x -= m_scroll.dx();
+
+    rect.y *= m_scale;
+    rect.y -= m_scroll.dy();
+
+    rect.width *= m_scale;
+    rect.height *= m_scale;
 }
 
-void RenderContext::setTransform(const Matrix& matrix)
+void RenderContext::transformPointToScreen(Vector2& point)
 {
-    m_transformation = matrix;
+    point.add(m_scroll);
+}
+
+void RenderContext::transformSizeToScreen(Vector2& size)
+{
+    size.scale(m_scale);
+}
+
+void RenderContext::transformFromScreen(IntPoint& point)
+{
+    point.setX((point.x() + m_scroll.dx()) / m_scale);
+    point.setY((point.y() + m_scroll.dy()) / m_scale);
 }
 
 }

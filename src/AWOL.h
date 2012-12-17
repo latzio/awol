@@ -1,9 +1,10 @@
 #ifndef TEMPLATEGAME_H_
 #define TEMPLATEGAME_H_
 
-#include "gameplay.h"
-
 #include "LayerTiler.h"
+#include "Render.h"
+
+#include "gameplay.h"
 
 using namespace gameplay;
 
@@ -58,10 +59,10 @@ protected:
 
 private:
 
-    Matrix m_projection;
+    RenderContext m_context;
 
-    Vector3 m_pendingMove;
-    Vector3 m_pendingZoom;
+    IntSize m_pendingMove;
+    float m_pendingZoom;
 
     Battle* m_battle;
 };

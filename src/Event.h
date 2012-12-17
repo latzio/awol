@@ -15,11 +15,12 @@ enum EventType {
 
 class EventTarget {
 public:
-	EventTarget();
 	virtual ~EventTarget();
 
 	virtual bool handleTouchEvent(const Event&) = 0;
 
+protected:
+    EventTarget();
 };
 
 class Event {
@@ -32,7 +33,7 @@ public:
 
 private:
 	EventType m_type;
-	IntPoint m_point;
+	IntPoint m_point; // Game coordinates. Unscrolled, unzoomed coordinates.
 	int m_index;
 };
 

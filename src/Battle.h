@@ -1,6 +1,7 @@
 #ifndef Battle_h
 #define Battle_h
 
+#include "BattleTile.h"
 #include "Event.h"
 #include "Render.h"
 #include "Unit.h"
@@ -11,39 +12,31 @@
 
 namespace Awol {
 
+class BattleMap;
 class Event;
 class LayerTiler;
 class RenderContext;
 
-class Force : public gameplay::Ref {
+class Force : public gameplay::Ref,
+              public EventTarget {
 public:
-    Force();
+    static Force* create(BattleMap*);
 
     void render(RenderContext&, const gameplay::Rectangle&);
 
+    // Event Target
+    virtual bool handleTouchEvent(const Event& event);
+
 private:
+    Force(BattleMap*);
     virtual ~Force();
 
+    BattleMap* m_map;
     std::vector<Unit*> m_units;
 
     LayerTiler* m_tiler;
 
 };
-
-class Terrain {
-public:
-    Terrain(TerrainKey key)
-        :m_key(key)
-    { };
-
-    TerrainKey key() const { return m_key; }
-
-private:
-    TerrainKey m_key;
-};
-
-typedef std::vector<Terrain> TerrainRow;
-typedef std::vector<TerrainRow> TerrainGrid;
 
 class BattleMap : public gameplay::Ref {
 public:
@@ -53,18 +46,21 @@ public:
 
     void render(RenderContext&, const gameplay::Rectangle&);
 
+    // Unscaled, unzoomed game coordinates.
+    BattleTile* getTileAt(const IntPoint& point) const;
+
+    // BattleField vector elements
+    BattleTile* getTile(unsigned row, unsigned col) const;
+
 private:
     BattleMap(const IntSize& size, const std::string& terrain);
     virtual ~BattleMap();
 
     void loadTerrainGrid(const std::string& path);
 
-    // Game coordinates, not pixels.
-    TerrainKey terrainAtCoord(const IntPoint& point);
-
     IntSize m_size;
     LayerTiler* m_tiler;
-    TerrainGrid m_terrain;
+    BattleField m_battleField;
 
 };
 
@@ -81,7 +77,9 @@ public:
     // A battle is constructed with a BattleMap upon which the battle occurs,
     // and a set of forces who oppose
     // A LevelMap to contain the grid information, and two object
-    Battle(BattleMap*, const Forces&);
+    Battle(BattleMap*);
+
+    void addForce(Force*);
 
     bool handleTouchEvent(const Event&);
 
