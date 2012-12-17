@@ -25,7 +25,6 @@ void AWOL::initialize()
                                        "res/background-1-1.png",
                                        "res/level1.dat");
     m_pendingZoom = 1;
-    m_pendingMove = IntSize(getWidth() / 2, getHeight() / 2);
 
     Force* force1 = Force::create(map);
     Force* force2 = Force::create(map);
