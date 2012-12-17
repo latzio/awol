@@ -92,7 +92,10 @@ source_group(src FILES ${GAME_SRC})
 set(GAME_SRC
 	src/AWOL.cpp
 	src/Battle.cpp
+	src/BattleTile.cpp
+  src/Event.cpp
 	src/LayerTiler.cpp
+  src/Primitives.cpp
 	src/Render.cpp
 	src/Unit.cpp
 )
