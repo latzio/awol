@@ -12,7 +12,6 @@ namespace Awol {
 
 AWOL::AWOL()
     :m_battle(0)
-    ,m_pendingZoom(1)
 {
 
 }
@@ -24,8 +23,6 @@ void AWOL::initialize()
     BattleMap* map = BattleMap::create(IntSize(100, 40),
                                        "res/background-1-1.png",
                                        "res/level1.dat");
-    m_pendingZoom = 1;
-
     Force* force1 = Force::create(map);
     Force* force2 = Force::create(map);
 
@@ -70,9 +67,6 @@ void AWOL::render(float elapsedTime)
     m_context.setElapsed(elapsedTime);
     m_context.setFrameId(frameCount);
 
-    m_context.setScroll(m_pendingMove);
-    m_context.setScale(m_pendingZoom);
-
     m_battle->render(m_context, elapsedTime);
 }
 
@@ -97,11 +91,8 @@ void AWOL::keyEvent(Keyboard::KeyEvent evt, int key)
 
 bool AWOL::mouseEvent(Mouse::MouseEvent evt, int x, int y, int wheelDelta)
 {
-    if (wheelDelta > 0) {
-        m_pendingZoom = m_pendingZoom * 1.1f;
-    } else if (wheelDelta < 0) {
-        m_pendingZoom = m_pendingZoom * 0.9f;
-    }
+    if (wheelDelta)
+        m_context.scaleAboutPoint(IntPoint(x, y), wheelDelta > 0 ? 1.1 : 1.0 / 1.1);
 
     return false;
 }
@@ -132,11 +123,13 @@ void AWOL::touchEvent(Touch::TouchEvent evt, int x, int y, unsigned int contactI
         break;
     case Touch::TOUCH_MOVE:
         if (!contactIndex) {
-            m_pendingMove = m_pendingMove + (s_lastTouchPoint - touchPoint);
+            m_context.scrollBy(s_lastTouchPoint - touchPoint);
             s_lastTouchPoint = touchPoint;
         }
         break;
     };
 }
+
+
 
 }

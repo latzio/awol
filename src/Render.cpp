@@ -7,10 +7,27 @@ namespace Awol {
 
 RenderContext::RenderContext()
     :m_layer(0)
+    ,m_scale(1)
     ,m_runtime(0)
     ,m_elapsed(0)
     ,m_frameId(0)
+
 {
+}
+
+void RenderContext::scaleAboutPoint(const IntPoint& focalPoint, float ratio)
+{
+    // Untransform the focalPoint, scale, and then adjust the scroll so
+    // that the retransformed point is in the same place as it was.
+    Vector2 untransformed(focalPoint);
+    transformFromScreen(untransformed);
+
+    m_scale *= ratio;
+
+    Vector2 retransformed(untransformed);
+    transformToScreen(retransformed);
+
+    m_scroll += retransformed - focalPoint;
 }
 
 void RenderContext::activateLayer(LayerTiler* layer)
@@ -41,37 +58,54 @@ void RenderContext::paintActive(unsigned key, const Rectangle& dstRect)
         m_layer->drawTile(key, translatedRect);
 }
 
+// Transformations Between Screen Pixels and Logical Game Tile Coordinates //
+
+void RenderContext::transformFromScreen(IntPoint& point)
+{
+    point.setX((point.x() + m_scroll.x) / m_scale);
+    point.setY((point.y() + m_scroll.y) / m_scale);
+}
+
+void RenderContext::transformFromScreen(Rectangle& rect)
+{
+    rect.x += m_scroll.x;
+    rect.x /= m_scale;
+
+    rect.y += m_scroll.y;
+    rect.y /= m_scale;
+
+    rect.width /= m_scale;
+    rect.height /= m_scale;
+}
+
+void RenderContext::transformFromScreen(Vector2& point)
+{
+    point.x = (point.x + m_scroll.x) / m_scale;
+    point.y = (point.y + m_scroll.y) / m_scale;
+}
+
 void RenderContext::transformToScreen(IntPoint& point)
 {
-    point = point + m_scroll;
+    point.setX(point.x() * m_scale - m_scroll.x);
+    point.setY(point.y() * m_scale - m_scroll.y);
 }
 
 void RenderContext::transformToScreen(Rectangle& rect)
 {
     rect.x *= m_scale;
-    rect.x -= m_scroll.dx();
+    rect.x -= m_scroll.x;
 
     rect.y *= m_scale;
-    rect.y -= m_scroll.dy();
+    rect.y -= m_scroll.y;
 
     rect.width *= m_scale;
     rect.height *= m_scale;
 }
 
-void RenderContext::transformPointToScreen(Vector2& point)
+void RenderContext::transformToScreen(Vector2& point)
 {
-    point.add(m_scroll);
-}
-
-void RenderContext::transformSizeToScreen(Vector2& size)
-{
-    size.scale(m_scale);
-}
-
-void RenderContext::transformFromScreen(IntPoint& point)
-{
-    point.setX((point.x() + m_scroll.dx()) / m_scale);
-    point.setY((point.y() + m_scroll.dy()) / m_scale);
+    point.x = point.x * m_scale - m_scroll.x;
+    point.y = point.y * m_scale - m_scroll.y;
 }
 
 }

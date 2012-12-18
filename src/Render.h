@@ -49,12 +49,13 @@ public:
     // paintActive operates in unscrolled, unscaled game coordinates.
     void paintActive(unsigned key, const gameplay::Rectangle&);
 
-    const IntSize& scroll() const { return m_scroll; }
-    void scrollBy(const IntSize& delta) { m_scroll = m_scroll + delta; }
-    void setScroll(const IntSize& scroll) { m_scroll = scroll; }
+    const gameplay::Vector2& scroll() const { return m_scroll; }
+    void scrollBy(const gameplay::Vector2& delta) { m_scroll = m_scroll + delta; }
+    void setScroll(const gameplay::Vector2& scroll) { m_scroll = scroll; }
 
     float scale() const { return m_scale; }
     void scaleBy(float scale) { m_scale = m_scale * scale; }
+    void scaleAboutPoint(const IntPoint&, float);
     void setScale(float scale) { m_scale = scale; }
 
     float runtime() const { return m_runtime; }
@@ -67,18 +68,19 @@ public:
     void setFrameId(unsigned frameId) { m_frameId = frameId; }
 
     void transformFromScreen(IntPoint&);
+    void transformFromScreen(gameplay::Rectangle&);
+    void transformFromScreen(gameplay::Vector2&);
 
     void transformToScreen(IntPoint&);
     void transformToScreen(gameplay::Rectangle&);
-    void transformPointToScreen(gameplay::Vector2&);
-    void transformSizeToScreen(gameplay::Vector2&);
+    void transformToScreen(gameplay::Vector2&);
 
 private:
     LayerTiler* m_layer;
 
-    // These combine to form the view transformation, basically.
-    IntSize m_scroll; // Essentially Scroll Position
-    float m_scale; // Linear zoom on XY plane.
+    // We keep the View transform in floating point to reduce rounding when zooming.
+    gameplay::Vector2 m_scroll;
+    float m_scale;
 
     float m_runtime;
     float m_elapsed;

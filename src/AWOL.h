@@ -60,10 +60,6 @@ protected:
 private:
 
     RenderContext m_context;
-
-    IntSize m_pendingMove;
-    float m_pendingZoom;
-
     Battle* m_battle;
 };
 
