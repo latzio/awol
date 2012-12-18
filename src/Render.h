@@ -46,8 +46,7 @@ public:
     void activateLayer(LayerTiler* layer);
     void deactivateLayer();
 
-    // paintActive operates in unscrolled, unscaled game coordinates.
-    void paintActive(unsigned key, const gameplay::Rectangle&);
+    void paintActive(unsigned key, const gameplay::Rectangle& untransformed);
 
     const gameplay::Vector2& scroll() const { return m_scroll; }
     void scrollBy(const gameplay::Vector2& delta) { m_scroll = m_scroll + delta; }
@@ -55,7 +54,7 @@ public:
 
     float scale() const { return m_scale; }
     void scaleBy(float scale) { m_scale = m_scale * scale; }
-    void scaleAboutPoint(const IntPoint&, float);
+    void scaleAboutPoint(const IntPoint& transformed, float);
     void setScale(float scale) { m_scale = scale; }
 
     float runtime() const { return m_runtime; }
@@ -66,6 +65,11 @@ public:
 
     unsigned frameId() const { return m_frameId; }
     void setFrameId(unsigned frameId) { m_frameId = frameId; }
+
+    // The following methods can be used to convert between coordinate systems:
+    // Screen a.k.a. Transformed: Physical pixels on the screen. (0, 0) is the top left corner of the screen.
+    // Game a.k.a. Untransformed: Pixels in the battle. Each tile is always BattleTile::tileSize(), (0, 0) is
+    //                            the top left corner of the top left tile in the battle field.
 
     void transformFromScreen(IntPoint&);
     void transformFromScreen(gameplay::Rectangle&);
