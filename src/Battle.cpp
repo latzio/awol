@@ -198,8 +198,6 @@ static Unit* s_focus = 0;
 
 bool Battle::handleTouchEvent(const Event& event)
 {
-    fprintf(stderr, "Battle::handleTouchEvent Coord(%d, %d)\n", event.point().x(), event.point().y());
-
     BattleTile* tile = m_map->getTileAt(event.point());
     Unit* unit = tile ? tile->unit() : 0;
 
