@@ -17,8 +17,8 @@ public:
 
     void render(RenderContext&);
 
-    const std::string& job() { return m_job; }
-    const std::string& name() { return m_name; }
+    const std::string& job() const { return m_job; }
+    const std::string& name() const { return m_name; }
 
     BattleTile* tile() const { return m_tile; }
     bool setTile(BattleTile* tile);
