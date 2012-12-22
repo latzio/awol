@@ -79,11 +79,11 @@ void LayerTiler::drawTile(int key, const Rectangle& dstRect)
     if (key < ' ' || !m_activeSprite)
         return;
 
-    static Rectangle srcRect(0, 0, tileSize().dx(), tileSize().dy());
+    static Rectangle srcRect(0, 0, tileSize().dx() - 2, tileSize().dy() - 2);
 
     int index = key - ' ';
-    srcRect.x = index * static_cast<int>(m_tileStride.dx()) % static_cast<int>(m_imageSize.dx() - m_tileOrigin.x()) + m_tileOrigin.x();
-    srcRect.y = index / static_cast<int>(m_imageSize.dx() / m_tileSize.dx()) * m_tileStride.dy() + m_tileOrigin.y();
+    srcRect.x = 1 + index * static_cast<int>(m_tileStride.dx()) % static_cast<int>(m_imageSize.dx() - m_tileOrigin.x()) + m_tileOrigin.x();
+    srcRect.y = 1 + index / static_cast<int>(m_imageSize.dx() / m_tileSize.dx()) * m_tileStride.dy() + m_tileOrigin.y();
 
     m_activeSprite->draw(dstRect, srcRect);
 }
